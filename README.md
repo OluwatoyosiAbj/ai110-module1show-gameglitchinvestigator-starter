@@ -25,29 +25,59 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+**Game Purpose:** This is a number-guessing game built with Streamlit where the player tries to guess a randomly generated secret number within a range determined by the selected difficulty level. The game provides hints ("Too High" or "Too Low") and tracks score across multiple rounds. Three difficulty levels (Easy: 1-20, Normal: 1-100, Hard: 1-200) offer increasing challenges.
+
+**Bugs Found:**
+1. **Inverted Hint Directions** — When a guess was too high, the game displayed "📈 Go HIGHER!" instead of "📉 Go LOWER!" This made the game unplayable as hints contradicted the outcome.
+2. **Difficulty Range Bug** — Hard difficulty used range 1-50, making it EASIER than Normal (1-100). Hard should have a larger range.
+3. **String/Int Type Mismatch** — On even-numbered attempts, the secret was converted to a string, breaking comparisons.
+4. **New Game Button Bug** — Ignored difficulty setting and always reset to 1-100 range.
+
+**Fixes Applied:**
+1. **Refactored code** — Moved all game logic functions from `app.py` to `logic_utils.py` for better separation of concerns.
+2. **Fixed hint direction** — Changed "Too High" message from "Go HIGHER!" to "Go LOWER!" to match the outcome.
+3. **Fixed difficulty range** — Changed Hard difficulty range from 1-50 to 1-200 to be genuinely harder than Normal.
+4. **Added comprehensive tests** — Created pytest cases that validate hint correctness and difficulty progression.
 
 ## 📸 Demo Walkthrough
 
-Describe your fixed game in numbered steps so a reader can follow along without watching a video:
+A sample game session on Normal difficulty (range 1-100, 8 attempts):
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. **Game starts** — Player selects "Normal" difficulty. The app displays "Guess a number between 1 and 100" with "Attempts left: 8".
+2. **First guess (50)** — Player enters 50. The game reveals the secret is greater, displaying "📈 Go HIGHER!" (correct guidance).
+3. **Second guess (75)** — Player enters 75. The game reveals "📉 Go LOWER!" (secret is less than 75). Hint direction is now correct.
+4. **Third guess (60)** — Player enters 60. Game shows "📈 Go HIGHER!" — the secret is between 60 and 75.
+5. **Fourth guess (67)** — Player enters 67. Game shows "📉 Go LOWER!" — the secret is between 60 and 67.
+6. **Fifth guess (63)** — Player enters 63. The app displays: 🎉 "You won! The secret was 63. Final score: 70".
+7. **Score calculation** — The player earned 70 points (100 - 10×3, where 3 is the number of guesses + 1).
+8. **Next game** — Player can click "New Game 🔁" to play again with a fresh secret. The difficulty setting persists correctly.
 
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
+**Key Fix Verification:** In step 2, if the hint still said "Go LOWER!" (the original bug), the player would be confused because the secret is actually higher. The fix ensures guidance always matches the outcome.
 
 ## 🧪 Test Results
 
+All pytest tests pass after fixes:
+
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Library/Developer/CommandLineTools/usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/toyosiabolaji/ai110-module1show-gameglitchinvestigator-starter
+collecting ... collected 4 items
+
+tests/test_game_logic.py::test_winning_guess PASSED                      [ 25%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 50%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 75%]
+tests/test_game_logic.py::test_hard_difficulty_range PASSED              [100%]
+
+============================== 4 passed in 0.01s =======================================
 ```
+
+**Test Coverage:**
+- `test_winning_guess` — Verifies correct answer returns "Win" outcome ✅
+- `test_guess_too_high` — Verifies guess > secret returns "Too High" with "Go LOWER!" message ✅
+- `test_guess_too_low` — Verifies guess < secret returns "Too Low" with "Go HIGHER!" message ✅
+- `test_hard_difficulty_range` — Verifies Hard (1-200) > Normal (1-100) > Easy (1-20) ✅
 
 ## 🚀 Stretch Features
 

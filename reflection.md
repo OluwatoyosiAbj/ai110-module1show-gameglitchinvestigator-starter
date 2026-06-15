@@ -66,13 +66,20 @@ Claude (my AI assistant) helped me write proper test assertions that check both 
 
 ## 4. What did you learn about Streamlit and state?
 
-- How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+**Streamlit Reruns and Session State Explained:**
+Streamlit reruns the entire script from top to bottom every time a user interacts with a widget (button click, text input, etc.). This is different from traditional web apps. Session state is Streamlit's memory system — it's a dictionary (`st.session_state`) that persists values across reruns for a single user session. 
+
+In this game, if we didn't use `st.session_state`, the secret number would be regenerated on every submission (randomint gets called again). By checking `if "secret" not in st.session_state:` once at startup, we store the secret and it survives all subsequent reruns. The session state acts like the game's "RAM" — it remembers the secret, the score, and the attempt count across all button clicks and submissions within one user session. When the browser tab is closed or the user starts a "New Game," that session state can be reset.
 
 ---
 
 ## 5. Looking ahead: your developer habits
 
-- What is one habit or strategy from this project that you want to reuse in future labs or projects?
-  - This could be a testing habit, a prompting strategy, or a way you used Git.
-- What is one thing you would do differently next time you work with AI on a coding task?
-- In one or two sentences, describe how this project changed the way you think about AI generated code.
+**One Habit to Reuse:**
+I want to keep using the "mark the crime scene" approach — adding `# FIXME` comments directly in the code before asking AI for help. This keeps the AI focused on a specific line or function instead of reading an entire codebase. It also creates a paper trail in git showing exactly where bugs were and how they were fixed. I'll use this in future projects whenever I'm debugging.
+
+**What I'd Do Differently:**
+Next time I work with AI on a coding task, I'll be more skeptical of initial explanations. In this project, when I asked if the "hard" difficulty range might be intentional, Claude initially said yes. I should have pushed back immediately by writing a test to confirm, rather than accepting the explanation. Tests are faster than debates with an AI about correctness.
+
+**How This Changed My Thinking About AI-Generated Code:**
+This project showed me that AI-generated code isn't inherently bad — it can be quite clean and readable. The bugs here weren't due to poor code quality; they were due to logical errors in requirements or design (inverted hints, backwards difficulty progression). AI code needs the same scrutiny as human code: write tests, verify outputs, and don't assume correctness just because it looks polished. The AI is a tool that can make mistakes, not a source of truth.
