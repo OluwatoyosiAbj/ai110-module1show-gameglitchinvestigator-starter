@@ -23,27 +23,44 @@ Document at least 3 bugs you found. Add rows as needed.
 
 ## 2. How did you use AI as a teammate?
 
-I used Claude Code (my AI coding assistant) to understand the buggy logic in this game. When I asked it to explain specific problematic sections of the code, it helped me trace through the logic step-by-step.
+I used Claude Code as my AI programming partner in multiple ways: to understand buggy logic, to refactor code, and to design better tests.
 
-**Example 1 (Correct AI explanation):** When I asked Claude to explain lines 158-161, it correctly identified that the code converts `secret` to a string on even-numbered attempts:
-```python
-if st.session_state.attempts % 2 == 0:
-    secret = str(st.session_state.secret)  # ← converts to string
-else:
-    secret = st.session_state.secret  # ← keeps as int
-```
-Claude explained that this causes the `check_guess()` function to compare `guess_int` (an int) against a string `secret` on even attempts, which will always evaluate incorrectly in comparison operations. I verified this by reading the comparison logic at lines 37-40 and confirming that `guess > secret` would fail on even attempts when comparing int to string.
+**Example 1 (Correct AI suggestion - Refactoring):** When I asked Claude to help refactor the game logic from app.py into logic_utils.py, it provided the exact steps:
+1. Copy the implementations from app.py
+2. Replace the `NotImplementedError` stubs in logic_utils.py
+3. Update app.py imports: `from logic_utils import get_range_for_difficulty, parse_guess, check_guess, update_score`
+4. Remove the duplicate function definitions from app.py
 
-**Example 2 (Incorrect AI suggestion):** I initially asked Claude if the "Hard" difficulty was intentional, and it suggested the range might be correct for a "time-attack" variant. However, when I read the code carefully, I saw that Hard actually has 5 attempts while Normal has 8 attempts, but SMALLER range (1-50 vs 1-100), making it easier, not harder. The attempt limit compensates but the range logic is backwards by design.
+I followed this approach and it worked perfectly. The app continued to run correctly, and pytest picked up the logic_utils.py implementations immediately.
+
+**Example 2 (Incorrect AI suggestion - Bug interpretation):** Initially, I asked Claude if the inverted hint messages might be intentional "psychological tricks" to confuse players. Claude agreed this was plausible, but then I tested it: when I traced through `check_guess(60, 50)`, the function returned `("Too High", "📈 Go HIGHER!")`. This is clearly a bug—the outcome correctly identifies the guess is too high, but the message tells you to go higher, which contradicts it. The fix was simple: change the message emoji and text to match the outcome. Claude then agreed this was definitely a bug, not a feature.
 
 ---
 
 ## 3. Debugging and testing your fixes
 
-- How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
-- Did AI help you design or understand any tests? How?
+**How I decided bugs were fixed:**
+I used a combination of pytest tests and code inspection. For the hint direction bug, I wrote tests that explicitly verify the returned message matches the outcome (e.g., "Too High" outcome returns "📉 Go LOWER!" message). For the difficulty range bug, I created a test comparing range sizes to ensure Hard > Normal > Easy.
+
+**Test results:**
+I ran `pytest tests/test_game_logic.py -v` and verified:
+```
+tests/test_game_logic.py::test_winning_guess PASSED                      [ 25%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 50%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 75%]
+tests/test_game_logic.py::test_hard_difficulty_range PASSED              [100%]
+
+============================== 4 passed in 0.01s =======================================
+```
+
+All 4 tests passed, confirming that:
+1. Winning guesses return correct outcome and emoji ✅
+2. Guess too high now correctly says "Go LOWER!" (was backwards) ✅
+3. Guess too low correctly says "Go HIGHER!" ✅
+4. Hard difficulty range (1-200) is now larger than Normal (1-100) ✅
+
+**AI collaboration on tests:**
+Claude (my AI assistant) helped me write proper test assertions that check both the outcome tuple AND the message content. Initially, the starter tests only checked the outcome string, which wouldn't have caught the inverted hint bug. Claude suggested checking the full return tuple `(outcome, message)` to ensure the message matched the outcome semantically.
 
 ---
 
