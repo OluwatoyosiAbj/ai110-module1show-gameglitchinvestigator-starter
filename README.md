@@ -56,28 +56,49 @@ A sample game session on Normal difficulty (range 1-100, 8 attempts):
 
 ## 🧪 Test Results
 
-All pytest tests pass after fixes:
+All 19 pytest tests pass, including edge cases:
 
 ```
 ============================= test session starts ==============================
 platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Library/Developer/CommandLineTools/usr/bin/python3
 cachedir: .pytest_cache
 rootdir: /Users/toyosiabolaji/ai110-module1show-gameglitchinvestigator-starter
-collecting ... collected 4 items
+collecting ... collected 19 items
 
-tests/test_game_logic.py::test_winning_guess PASSED                      [ 25%]
-tests/test_game_logic.py::test_guess_too_high PASSED                     [ 50%]
-tests/test_game_logic.py::test_guess_too_low PASSED                      [ 75%]
-tests/test_game_logic.py::test_hard_difficulty_range PASSED              [100%]
+tests/test_game_logic.py::test_winning_guess PASSED                      [  5%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [ 10%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 15%]
+tests/test_game_logic.py::test_hard_difficulty_range PASSED              [ 21%]
+tests/test_game_logic.py::test_parse_negative_number PASSED              [ 26%]
+tests/test_game_logic.py::test_parse_very_large_number PASSED            [ 31%]
+tests/test_game_logic.py::test_parse_decimal_truncates PASSED            [ 36%]
+tests/test_game_logic.py::test_parse_scientific_notation_fails PASSED    [ 42%]
+tests/test_game_logic.py::test_parse_leading_trailing_whitespace PASSED  [ 47%]
+tests/test_game_logic.py::test_parse_multiple_dots_fails PASSED          [ 52%]
+tests/test_game_logic.py::test_parse_alphanumeric_fails PASSED           [ 57%]
+tests/test_game_logic.py::test_parse_empty_string PASSED                 [ 63%]
+tests/test_game_logic.py::test_parse_none_input PASSED                   [ 68%]
+tests/test_game_logic.py::test_parse_special_characters PASSED           [ 73%]
+tests/test_game_logic.py::test_check_guess_with_zero PASSED              [ 78%]
+tests/test_game_logic.py::test_check_guess_boundary_1 PASSED             [ 84%]
+tests/test_game_logic.py::test_check_guess_negative_secret PASSED        [ 89%]
+tests/test_game_logic.py::test_parse_zero PASSED                         [ 94%]
+tests/test_game_logic.py::test_parse_float_zero PASSED                   [100%]
 
-============================== 4 passed in 0.01s =======================================
+============================== 19 passed in 0.02s =======================================
 ```
 
-**Test Coverage:**
+**Core Logic Tests (4):**
 - `test_winning_guess` — Verifies correct answer returns "Win" outcome ✅
 - `test_guess_too_high` — Verifies guess > secret returns "Too High" with "Go LOWER!" message ✅
 - `test_guess_too_low` — Verifies guess < secret returns "Too Low" with "Go HIGHER!" message ✅
 - `test_hard_difficulty_range` — Verifies Hard (1-200) > Normal (1-100) > Easy (1-20) ✅
+
+**Edge-Case Input Handling (15):**
+- Negative numbers, very large numbers, decimals, scientific notation rejection
+- Leading/trailing whitespace handling, multiple dots, alphanumeric rejection
+- Empty strings, None input, special characters
+- Boundary values (0, 1), negative secrets, float zero conversion
 
 ## 🚀 Stretch Features
 
